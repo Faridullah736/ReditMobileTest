@@ -27,6 +27,7 @@ class Githubuser: NSObject,NSCoding {
     var siteAdmin : Bool!
     var starredUrl : String!
     var subscriptionsUrl : String!
+    var textMatches : [TextMatche]!
     var type : String!
     var url : String!
     
@@ -54,6 +55,12 @@ class Githubuser: NSObject,NSCoding {
         siteAdmin = json["site_admin"].boolValue
         starredUrl = json["starred_url"].stringValue
         subscriptionsUrl = json["subscriptions_url"].stringValue
+        textMatches = [TextMatche]()
+        let textMatchesArray = json["text_matches"].arrayValue
+        for textMatchesJson in textMatchesArray{
+            let value = TextMatche(fromJson: textMatchesJson)
+            textMatches.append(value)
+        }
         type = json["type"].stringValue
         url = json["url"].stringValue
     }
@@ -115,6 +122,13 @@ class Githubuser: NSObject,NSCoding {
         if subscriptionsUrl != nil{
             dictionary["subscriptions_url"] = subscriptionsUrl
         }
+        if textMatches != nil{
+            var dictionaryElements = [[String:Any]]()
+            for textMatchesElement in textMatches {
+                dictionaryElements.append(textMatchesElement.toDictionary())
+            }
+            dictionary["textMatches"] = dictionaryElements
+        }
         if type != nil{
             dictionary["type"] = type
         }
@@ -147,6 +161,7 @@ class Githubuser: NSObject,NSCoding {
         siteAdmin = aDecoder.decodeObject(forKey: "site_admin") as? Bool
         starredUrl = aDecoder.decodeObject(forKey: "starred_url") as? String
         subscriptionsUrl = aDecoder.decodeObject(forKey: "subscriptions_url") as? String
+        textMatches = aDecoder.decodeObject(forKey: "text_matches") as? [TextMatche]
         type = aDecoder.decodeObject(forKey: "type") as? String
         url = aDecoder.decodeObject(forKey: "url") as? String
     }
@@ -207,6 +222,9 @@ class Githubuser: NSObject,NSCoding {
         }
         if subscriptionsUrl != nil{
             aCoder.encode(subscriptionsUrl, forKey: "subscriptions_url")
+        }
+        if textMatches != nil{
+            aCoder.encode(textMatches, forKey: "text_matches")
         }
         if type != nil{
             aCoder.encode(type, forKey: "type")

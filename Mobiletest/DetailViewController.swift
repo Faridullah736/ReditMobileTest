@@ -47,7 +47,19 @@ class DetailViewController: UIViewController {
     func ConfigView() {
         self.title = "Details"
         lblname.text = userDetail?.login
-        lblemail.text = "Score:\(userDetail?.score ?? 0.0)"
+        if (userDetail?.textMatches.count)! > 2 {
+            lblemail.text = "Email:\(userDetail?.textMatches[2].fragment ?? "0")"
+        }else{
+            let alertController = UIAlertController(title: "Mobile Test", message: "Email not available!", preferredStyle: .alert)
+            let action1 = UIAlertAction(title: "Ok", style: .default) { (action:UIAlertAction) in
+               
+            }
+            alertController.addAction(action1)
+
+            self.present(alertController, animated: true, completion: nil)
+           lblemail.text = "Score:\(userDetail?.score ?? 0.0)"
+        }
+        
         if let image = userDetail?.avatarUrl {
             avatar.loadImageWith(imgUrl: image, placeHolder: nil)
         }
@@ -66,10 +78,6 @@ extension DetailViewController:UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         cell.textLabel?.text = arrayfollowers[indexPath.row].login
         
-        cell.imageView?.layer.masksToBounds = false
-        cell.imageView?.layer.cornerRadius = (cell.imageView?.frame.height)!/2
-        cell.imageView?.clipsToBounds = true
-        
         if let image = arrayfollowers[indexPath.row].avatarUrl {
             cell.imageView?.loadImageWith(imgUrl: image, placeHolder: nil)
         }
@@ -81,7 +89,6 @@ extension DetailViewController {
     func callWebServiceUserFollower(user:String){
         
         let url:String=Endpoint.userfollower(userStr: user).urlString()
-        print(url)
         
         _ = WebServiceManager.call(requestMethod: .get, serviceURL: url, params: nil, includeAccessToken: true, completion: { (response, error) in
             
@@ -101,7 +108,7 @@ extension DetailViewController {
                     
                     
                 } else if response?.response?.statusCode == ServerResponseStatusCode.kExpiredToken {
-                    // Extension.showSessionExpiredAndOpenLogin(parentVC: self)
+                   
                 } else if error != nil {
                     
                     print(error?.localizedDescription ?? "")

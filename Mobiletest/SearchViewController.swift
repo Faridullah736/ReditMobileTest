@@ -91,6 +91,7 @@ extension SearchViewController {
                 if (response?.response?.statusCode == ServerResponseStatusCode.kOK) && (response!.result.value != nil) {
                     self.arraySearchUser.removeAll()
                     let responseData = JSON(response!.result.value!)
+                  
                     let resultData = responseData[DateResponseKey.kResult].arrayValue
                     for jsonUnit in resultData {
                         self.arraySearchUser.append(Githubuser(fromJson:jsonUnit))

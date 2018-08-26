@@ -28,7 +28,7 @@ enum Endpoint {
     func urlString() -> String {
         switch self {
         case .GithubSearch:
-            return serverBaseURL + "search/users?q=a"
+            return serverBaseURL + "search/users?q=tom"
             
         case .GithubSearchbyuser(searchStr: let userStr):
             return serverBaseURL + "search/users?q=\(userStr)"
@@ -66,8 +66,8 @@ class WebServiceManager: NSObject {
             return nil
         }
         
-        let headers : HTTPHeaders? = nil
-    
+        var headers : HTTPHeaders? = nil
+        headers = ["Accept" : "application/vnd.github.v3.text-match+json"]
        
         
         return Alamofire.request(serviceURL, method: requestMethod, parameters: params, encoding: JSONEncoding.default, headers: headers).responseJSON { (responseData) in
